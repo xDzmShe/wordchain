@@ -15,10 +15,6 @@ import java.util.stream.Stream;
 
 public class FixedLengthWordChainFinder implements WordChainFinder {
 
-	public FixedLengthWordChainFinder() {
-		super();
-	}
-
 	private final String PATH_TO_DICTIONARY = "wordlist.txt";
 
 	/**
