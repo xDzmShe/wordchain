@@ -14,6 +14,17 @@ public class WordChainApplication {
 	}
 
 	static boolean validateCommandLineArguments(String[] args) {
-		return false;
+		if (args.length != 2) {
+			System.out.println("Usage: WordChainApplication <start_word> <end_word>");
+			System.err.println("Wrong number of parameters. Expected 2, received " + args.length);
+			return false;
+		}
+
+		if (args[0].length() != args[1].length()) {
+			System.err.println("Both words must be the same length");
+			return false;
+		}
+
+		return true;
 	}
 }
