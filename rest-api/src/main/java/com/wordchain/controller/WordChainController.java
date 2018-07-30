@@ -18,10 +18,8 @@ public class WordChainController {
 	public List<String> findWordChain(@RequestParam(value = "start_word", required = true) String startWord,
 			@RequestParam(value = "end_word", required = true) String endWord) {
 
-		List<String> wordChain = null;
 		WordChainFinder wordChainPuzzle = new FixedLengthWordChainFinder();
-		wordChain = wordChainPuzzle.findChain(startWord, endWord);
 
-		return wordChain;
+		return wordChainPuzzle.findChain(startWord, endWord);
 	}
 }
