@@ -1,7 +1,11 @@
 package com.wordchain;
 
+import java.util.List;
+
 public class WordChainApplication {
 
+	private static WordChainFinder wordChainFinder;
+	
 	public static void main(String[] args) {
 
 		// validate command line arguments
@@ -9,8 +13,8 @@ public class WordChainApplication {
 			System.exit(1);
 		}
 
-		// find word chain
-		// print result
+		//List<String> wordChain = wordChainFinder.findChain(args[0], args[1]);
+		//System.out.println(wordChain != null ? wordChain : "Cannot find solution");
 	}
 
 	static boolean validateCommandLineArguments(String[] args) {
