@@ -13,6 +13,9 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FixedLengthWordChainFinder implements WordChainFinder {
 
 	private final String PATH_TO_DICTIONARY = "wordlist.txt";
@@ -25,36 +28,37 @@ public class FixedLengthWordChainFinder implements WordChainFinder {
 	 * @param endWord
 	 *            Last word in the chain
 	 */
-	public List<String> findChain(final String startWord, final String endWord) {
+	public List<String> findShortestWordChainBetweenTwoWords(final String startWord, final String endWord) {
 		if (startWord.equals(endWord)) {
 			System.out.println("Both words are identical");
 			return null;
 		}
 
-		List<String> dictionary = loadDictionary(startWord.length());
+		List<String> dictionary = loadListOfWordsWithGivenLengthFromFile(startWord.length());
 
-		Map<String, String> listOfPrevious = new HashMap<>();
+		Map<String, String> mapWithLinkToPreviousWordInChain = new HashMap<>();
 		boolean isPathFound = false;
 
 		Queue<String> queue = new LinkedList<String>();
 		queue.add(startWord);
 
-		// build tree of words that different from each other only by one character
-		// store path from bottom of the tree to the root in listOfPrevious
+		// build a tree of words that different from each other only by one character
+		// store path from bottom of the tree to the root in
+		// mapWithPathToPreviousWordInChain
 		while (!queue.isEmpty() && isPathFound == false) {
 			String currentWord = queue.remove();
-			List<String> listOfNextWords = getNextWords(currentWord, dictionary);
+			List<String> listOfNextWords = getListOfWordsThatDifferByOneCharacterOnly(currentWord, dictionary);
 
 			for (String word : listOfNextWords) {
 
 				if (word.equals(endWord)) {
-					listOfPrevious.put(word, currentWord);
+					mapWithLinkToPreviousWordInChain.put(word, currentWord);
 					isPathFound = true;
 					break;
 				}
 
-				if (!listOfPrevious.containsKey(word)) {
-					listOfPrevious.put(word, currentWord);
+				if (!mapWithLinkToPreviousWordInChain.containsKey(word)) {
+					mapWithLinkToPreviousWordInChain.put(word, currentWord);
 					queue.add(word);
 				}
 			}
@@ -62,7 +66,7 @@ public class FixedLengthWordChainFinder implements WordChainFinder {
 		}
 
 		if (isPathFound) {
-			return getPath(listOfPrevious, startWord, endWord);
+			return createWordChainBasedOnGivenMap(mapWithLinkToPreviousWordInChain, startWord, endWord);
 		} else {
 			return null;
 		}
@@ -74,7 +78,7 @@ public class FixedLengthWordChainFinder implements WordChainFinder {
 	 * @param wordLength
 	 *            Length of words that should be load from the dictionary
 	 */
-	List<String> loadDictionary(final int wordLength) {
+	List<String> loadListOfWordsWithGivenLengthFromFile(final int wordLength) {
 		List<String> wordList = null;
 
 		try (Stream<String> stream = Files
@@ -96,10 +100,10 @@ public class FixedLengthWordChainFinder implements WordChainFinder {
 	 * @param dictionary
 	 *            Dictionary where to find words that differ by one character
 	 */
-	List<String> getNextWords(final String word, List<String> dictionary) {
+	List<String> getListOfWordsThatDifferByOneCharacterOnly(final String word, List<String> dictionary) {
 		List<String> nextWords = new ArrayList<>();
 		for (String currWord : dictionary) {
-			if (getDiff(word, currWord) == 1) {
+			if (areWordsDifferByOneCharacterOnly(word, currWord)) {
 				nextWords.add(currWord);
 			}
 		}
@@ -107,39 +111,46 @@ public class FixedLengthWordChainFinder implements WordChainFinder {
 	}
 
 	/**
-	 * Compares two words and returns how many differences between them
+	 * Compares two words and returns true if that words differ by one character
+	 * only
 	 * 
 	 * @param word1
 	 *            First word to compare
 	 * @param word2
 	 *            Second word to compare
 	 */
-	int getDiff(final String word1, final String word2) {
+	boolean areWordsDifferByOneCharacterOnly(final String word1, final String word2) {
 		int diff = 0;
 		for (int i = 0; i < word1.length(); i++) {
 			if (word1.charAt(i) != word2.charAt(i)) {
 				diff++;
+
+				if (diff > 1) {
+					break;
+				}
 			}
 		}
-		return diff;
+		return diff == 1 ? true : false;
 	}
 
 	/**
-	 * Creates path from startWord to endWord based on listOfPrevious
+	 * Creates path from startWord to endWord based on
+	 * mapWithLinkToPreviousWordInChain
 	 * 
-	 * @param listOfPrevious
+	 * @param mapWithLinkToPreviousWordInChain
 	 *            Contains map with word pairs from bottom of the tree to the root
 	 * @param startWord
 	 *            First word in the chain
 	 * @param endWord
 	 *            Last word in the chain
 	 */
-	List<String> getPath(final Map<String, String> listOfPrevious, final String startWord, final String endWord) {
+	List<String> createWordChainBasedOnGivenMap(final Map<String, String> mapWithLinkToPreviousWordInChain,
+			final String startWord, final String endWord) {
 		List<String> path = new LinkedList<>();
 		String word = endWord;
 		while (!word.equals(startWord)) {
 			path.add(0, word);
-			word = listOfPrevious.get(word);
+			word = mapWithLinkToPreviousWordInChain.get(word);
 		}
 
 		path.add(0, startWord);

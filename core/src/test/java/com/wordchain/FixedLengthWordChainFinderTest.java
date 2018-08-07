@@ -1,6 +1,8 @@
 package com.wordchain;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -37,44 +39,48 @@ public class FixedLengthWordChainFinderTest {
 
 	@Test
 	public void testFindChain_SameStartAndEndWords() {
-		Mockito.doReturn(DICTIONARY).when(wordChainMock).loadDictionary(WORD_LENGTH);
-		assertEquals(wordChainMock.findChain("111", "111"), null);
+		Mockito.doReturn(DICTIONARY).when(wordChainMock).loadListOfWordsWithGivenLengthFromFile(WORD_LENGTH);
+		assertEquals(wordChainMock.findShortestWordChainBetweenTwoWords("111", "111"), null);
 	}
 
 	@Test
 	public void testFindChain_Successful_ShortChain() {
-		when(wordChainMock.loadDictionary(WORD_LENGTH)).thenReturn(DICTIONARY);
-		assertEquals(wordChainMock.findChain("111", "222"), Arrays.asList("111", "121", "221", "222"));
+		when(wordChainMock.loadListOfWordsWithGivenLengthFromFile(WORD_LENGTH)).thenReturn(DICTIONARY);
+		assertEquals(wordChainMock.findShortestWordChainBetweenTwoWords("111", "222"),
+				Arrays.asList("111", "121", "221", "222"));
 	}
 
 	@Test
 	public void testFindChain_Unsuccessful() {
-		when(wordChainMock.loadDictionary(WORD_LENGTH)).thenReturn(DICTIONARY);
-		assertEquals(wordChainMock.findChain("111", "777"), null);
+		when(wordChainMock.loadListOfWordsWithGivenLengthFromFile(WORD_LENGTH)).thenReturn(DICTIONARY);
+		assertEquals(wordChainMock.findShortestWordChainBetweenTwoWords("111", "777"), null);
 	}
 
 	@Test
 	public void testGetPath() {
-		assertEquals(wordChainMock.getPath(LIST_OF_PREVIOUS, "111", "222"), Arrays.asList("111", "121", "221", "222"));
+		assertEquals(wordChainMock.createWordChainBasedOnGivenMap(LIST_OF_PREVIOUS, "111", "222"),
+				Arrays.asList("111", "121", "221", "222"));
 	}
 
 	@Test
-	public void testGetDiff_OneDifference() {
-		assertEquals(wordChainMock.getDiff("111", "112"), 1);
+	public void testGetDiff_OneDifference_True() {
+		assertTrue(wordChainMock.areWordsDifferByOneCharacterOnly("111", "112"));
 	}
 
 	@Test
-	public void testGetDiff_TwoDifferences() {
-		assertEquals(wordChainMock.getDiff("111", "212"), 2);
+	public void testGetDiff_TwoDifferences_False() {
+		assertFalse(wordChainMock.areWordsDifferByOneCharacterOnly("111", "212"));
 	}
 
 	@Test
 	public void testGetNextWords_wordsFound() {
-		assertEquals(wordChainMock.getNextWords("111", DICTIONARY), Arrays.asList("112", "121", "211"));
+		assertEquals(wordChainMock.getListOfWordsThatDifferByOneCharacterOnly("111", DICTIONARY),
+				Arrays.asList("112", "121", "211"));
 	}
 
 	@Test
 	public void testGetNextWords_wordsNotFound() {
-		assertEquals(wordChainMock.getNextWords("777", DICTIONARY), new ArrayList<String>());
+		assertEquals(wordChainMock.getListOfWordsThatDifferByOneCharacterOnly("777", DICTIONARY),
+				new ArrayList<String>());
 	}
 }

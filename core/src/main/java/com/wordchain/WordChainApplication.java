@@ -2,22 +2,33 @@ package com.wordchain;
 
 import java.util.List;
 
-public class WordChainApplication {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-	private static WordChainFinder wordChainFinder = new FixedLengthWordChainFinder();
-	
+@ComponentScan
+public class WordChainApplication implements CommandLineRunner {
+
+	@Autowired
+	private WordChainFinder wordChainFinder;
+
 	public static void main(String[] args) {
+		SpringApplication.run(WordChainApplication.class, args);
+	}
+
+	@Override
+	public void run(String... args) {
 
 		// validate command line arguments
-		if (!validateCommandLineArguments(args)) {
+		if (!areCommandLineArgumentsValid(args)) {
 			System.exit(1);
 		}
-
-		List<String> wordChain = wordChainFinder.findChain(args[0], args[1]);
+		List<String> wordChain = wordChainFinder.findShortestWordChainBetweenTwoWords(args[0], args[1]);
 		System.out.println(wordChain != null ? wordChain : "Cannot find solution");
 	}
 
-	static boolean validateCommandLineArguments(String[] args) {
+	boolean areCommandLineArgumentsValid(String[] args) {
 		if (args.length != 2) {
 			System.out.println("Usage: WordChainApplication <start_word> <end_word>");
 			System.err.println("Wrong number of parameters. Expected 2, received " + args.length);
