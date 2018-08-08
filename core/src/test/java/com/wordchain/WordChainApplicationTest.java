@@ -13,7 +13,7 @@ public class WordChainApplicationTest {
 	 * Verify the method returns false in case only 1 command-line arguments present
 	 */
 	@Test
-	public void testValidateCommandLineArguments_OneArg_False() {
+	public void testAreCommandLineArgumentsValid_OneArg_False() {
 		boolean result;
 
 		String[] oneArg = { "one" };
@@ -26,7 +26,7 @@ public class WordChainApplicationTest {
 	 * the same length
 	 */
 	@Test
-	public void testValidateCommandLineArguments_TwoArgsSameLength_True() {
+	public void testAreCommandLineArgumentsValid_TwoArgsSameLength_True() {
 		boolean result;
 		String[] twoArgs = { "one", "two" };
 		result = wordChainApplication.areCommandLineArgumentsValid(twoArgs);
@@ -39,7 +39,7 @@ public class WordChainApplicationTest {
 	 * different length
 	 */
 	@Test
-	public void testValidateCommandLineArguments_TwoArgsDifferentLength_False() {
+	public void testAreCommandLineArgumentsValid_TwoArgsDifferentLength_False() {
 		boolean result;
 		String[] twoArgsDifferentLength = { "short", "long" };
 		result = wordChainApplication.areCommandLineArgumentsValid(twoArgsDifferentLength);
@@ -50,7 +50,7 @@ public class WordChainApplicationTest {
 	 * Verify the method returns false in case 3 command-line arguments present
 	 */
 	@Test
-	public void testValidateCommandLineArguments_ThreeArgs_False() {
+	public void testAreCommandLineArgumentsValid_ThreeArgs_False() {
 		boolean result;
 		String[] threeArgs = { "one", "two", "three" };
 		result = wordChainApplication.areCommandLineArgumentsValid(threeArgs);

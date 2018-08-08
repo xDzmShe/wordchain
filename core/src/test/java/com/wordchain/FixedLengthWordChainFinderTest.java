@@ -23,63 +23,63 @@ public class FixedLengthWordChainFinderTest {
 
 	private final int WORD_LENGTH = 3;
 
-	private final Map<String, String> LIST_OF_PREVIOUS = new HashMap<String, String>();
+	private final Map<String, String> MAP_WITH_LINK_TO_PREVIOUS_WORD = new HashMap<String, String>();
 
 	{
-		LIST_OF_PREVIOUS.put("112", "111");
-		LIST_OF_PREVIOUS.put("121", "111");
-		LIST_OF_PREVIOUS.put("211", "111");
-		LIST_OF_PREVIOUS.put("111", "112");
-		LIST_OF_PREVIOUS.put("221", "121");
-		LIST_OF_PREVIOUS.put("222", "221");
+		MAP_WITH_LINK_TO_PREVIOUS_WORD.put("112", "111");
+		MAP_WITH_LINK_TO_PREVIOUS_WORD.put("121", "111");
+		MAP_WITH_LINK_TO_PREVIOUS_WORD.put("211", "111");
+		MAP_WITH_LINK_TO_PREVIOUS_WORD.put("111", "112");
+		MAP_WITH_LINK_TO_PREVIOUS_WORD.put("221", "121");
+		MAP_WITH_LINK_TO_PREVIOUS_WORD.put("222", "221");
 	}
 
 	@Spy
 	FixedLengthWordChainFinder wordChainMock = spy(FixedLengthWordChainFinder.class);
 
 	@Test
-	public void testFindChain_SameStartAndEndWords() {
+	public void testFindShortestWordChainBetweenTwoWords_SameStartAndEndWords() {
 		Mockito.doReturn(DICTIONARY).when(wordChainMock).loadListOfWordsWithGivenLengthFromFile(WORD_LENGTH);
 		assertEquals(wordChainMock.findShortestWordChainBetweenTwoWords("111", "111"), null);
 	}
 
 	@Test
-	public void testFindChain_Successful_ShortChain() {
+	public void testFindShortestWordChainBetweenTwoWords_Successful_ShortChain() {
 		when(wordChainMock.loadListOfWordsWithGivenLengthFromFile(WORD_LENGTH)).thenReturn(DICTIONARY);
 		assertEquals(wordChainMock.findShortestWordChainBetweenTwoWords("111", "222"),
 				Arrays.asList("111", "121", "221", "222"));
 	}
 
 	@Test
-	public void testFindChain_Unsuccessful() {
+	public void testFindShortestWordChainBetweenTwoWords_Unsuccessful() {
 		when(wordChainMock.loadListOfWordsWithGivenLengthFromFile(WORD_LENGTH)).thenReturn(DICTIONARY);
 		assertEquals(wordChainMock.findShortestWordChainBetweenTwoWords("111", "777"), null);
 	}
 
 	@Test
-	public void testGetPath() {
-		assertEquals(wordChainMock.createWordChainBasedOnGivenMap(LIST_OF_PREVIOUS, "111", "222"),
+	public void testCreateWordChainBasedOnGivenMap() {
+		assertEquals(wordChainMock.createWordChainBasedOnGivenMap(MAP_WITH_LINK_TO_PREVIOUS_WORD, "111", "222"),
 				Arrays.asList("111", "121", "221", "222"));
 	}
 
 	@Test
-	public void testGetDiff_OneDifference_True() {
+	public void testAreWordsDifferByOneCharacterOnly_OneDifference_True() {
 		assertTrue(wordChainMock.areWordsDifferByOneCharacterOnly("111", "112"));
 	}
 
 	@Test
-	public void testGetDiff_TwoDifferences_False() {
+	public void testAreWordsDifferByOneCharacterOnly_TwoDifferences_False() {
 		assertFalse(wordChainMock.areWordsDifferByOneCharacterOnly("111", "212"));
 	}
 
 	@Test
-	public void testGetNextWords_wordsFound() {
+	public void testGetListOfWordsThatDifferByOneCharacterOnly_wordsFound() {
 		assertEquals(wordChainMock.getListOfWordsThatDifferByOneCharacterOnly("111", DICTIONARY),
 				Arrays.asList("112", "121", "211"));
 	}
 
 	@Test
-	public void testGetNextWords_wordsNotFound() {
+	public void testGetListOfWordsThatDifferByOneCharacterOnly_wordsNotFound() {
 		assertEquals(wordChainMock.getListOfWordsThatDifferByOneCharacterOnly("777", DICTIONARY),
 				new ArrayList<String>());
 	}
